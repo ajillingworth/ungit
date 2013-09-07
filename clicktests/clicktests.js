@@ -85,6 +85,7 @@ function getClickPosition(page, id) {
 function waitForElement(page, id, callback) {
 	var tryFind = function() {
 		console.log('Trying to find element: ' + id);
+		console.log(page.content);
 		var found = page.evaluate(function(selector) {
 			var els = document.querySelectorAll(selector);
 			return els.length > 0;
