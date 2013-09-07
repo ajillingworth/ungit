@@ -66,13 +66,13 @@ function taIdToSelector(id) {
 
 function getElementPosition(page, id) {
 	return page.evaluate(function(selector) {
-		return $(selector).offset();
+		return window.$(selector).offset();
 	}, taIdToSelector(id));
 }
 
 function getClickPosition(page, id) {
 	return page.evaluate(function(selector) {
-		var el = $(selector);
+		var el = window.$(selector);
 		return {
 			left: el.offset().left + el.width() / 2,
 			top: el.offset().top + el.height() / 2,
@@ -84,7 +84,7 @@ function waitForElement(page, id, callback) {
 	var tryFind = function() {
 		console.log('Trying to find element: ' + id);
 		var found = page.evaluate(function(selector) {
-			return $(selector).length > 0;
+			return window.$(selector).length > 0;
 		}, taIdToSelector(id));
 		if (found) callback();
 		else setTimeout(tryFind, 500);
