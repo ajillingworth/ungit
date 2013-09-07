@@ -66,16 +66,18 @@ function taIdToSelector(id) {
 
 function getElementPosition(page, id) {
 	return page.evaluate(function(selector) {
-		return window.$(selector).offset();
+		var br = document.querySelectorAll(selector)[0].getBoundingClientRect();
+		return { left: br.left, top: br.top };
 	}, taIdToSelector(id));
 }
 
 function getClickPosition(page, id) {
 	return page.evaluate(function(selector) {
-		var el = window.$(selector);
+		var el = document.querySelectorAll(selector)[0];
+		var br = el.getBoundingClientRect();
 		return {
-			left: el.offset().left + el.width() / 2,
-			top: el.offset().top + el.height() / 2,
+			left: br.left + br.width / 2,
+			top: br.top + br.height / 2,
 		};
 	}, taIdToSelector(id));	
 }
@@ -84,7 +86,8 @@ function waitForElement(page, id, callback) {
 	var tryFind = function() {
 		console.log('Trying to find element: ' + id);
 		var found = page.evaluate(function(selector) {
-			return window.$(selector).length > 0;
+			var els = document.querySelectorAll(selector);
+			return els.length > 0;
 		}, taIdToSelector(id));
 		if (found) callback();
 		else setTimeout(tryFind, 500);
