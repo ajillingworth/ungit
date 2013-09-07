@@ -52,9 +52,9 @@ function startUngitServer(options, callback) {
 }
 
 function createTestDirectory(page, callback) {
-	var url = 'http://localhost:' + config.port + '/api/testing/createdir';
+	var url = 'http://127.0.0.1:' + config.port + '/api/testing/createdir';
 	page.open(url, 'POST', function(status) {
-		if (status == 'fail') return callback({ status: status, content: page.plainText });
+		if (status != 'success') return callback({ status: status, content: page.plainText });
 		var json = JSON.parse(page.plainText);
 		callback(null, json.path);
 	});
@@ -112,7 +112,7 @@ function runTests() {
 			var timeout = setTimeout(function() {
 				console.error('Test timeouted!');
 				callback('timeout');
-			}, 3000);
+			}, 10000);
 			test.description(function(err, res) {
 				clearTimeout(timeout);
 				if (err) {
@@ -140,7 +140,8 @@ var page = createPage(function(err) {
 });
 
 test('Open home screen', function(done) {
-	page.open('http://localhost:' + config.port, function() {
+	page.open('http://127.0.0.1:' + config.port, function(status) {
+		if (status != 'success') return done('open failed: ' + page.plainText);
 		waitForElement(page, 'home-page', function() {
 			done();
 		});
@@ -158,7 +159,8 @@ test('Create test directory', function(done) {
 });
 
 test('Open path screen', function(done) {
-	page.open('http://localhost:' + config.port + '/#/repository?path=' + encodeURIComponent(testRepoPath), function () {
+	page.open('http://127.0.0.1:' + config.port + '/#/repository?path=' + encodeURIComponent(testRepoPath), function (status) {
+		if (status != 'success') return done('open failed: ' + page.plainText);
 		waitForElement(page, 'path-page', function() {
 			done();
 		});
